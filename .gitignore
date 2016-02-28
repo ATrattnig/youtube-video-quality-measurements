@@ -1,0 +1,7 @@
+/libs/libav
+/libs/qpsnr/src/qav.cpp~
+/scripts/calculatePSNRandSSIM.sh~
+/scripts/downloadRepresentations.sh~
+/scripts/downloadAll.sh~
+/scripts/measureAll.sh~
+/setup/installLibs.sh~
