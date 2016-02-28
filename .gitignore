@@ -5,3 +5,10 @@
 /scripts/downloadAll.sh~
 /scripts/measureAll.sh~
 /setup/installLibs.sh~
+/scripts/youtubeAPI/upload_video.py~
+/scripts/youtubeAPI/delete_video.py~
+/scripts/uploadMeasurement.sh~
+/scripts/youtubeAPI/delete_video.py-oauth2.json
+/scripts/youtubeAPI/upload_video.py-oauth2.json
+/scripts/client_secrets.json
+/scripts/youtubeAPI/client_secrets.json
