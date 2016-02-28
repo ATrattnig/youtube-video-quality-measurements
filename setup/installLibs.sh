@@ -10,3 +10,15 @@ git clone git://git.libav.org/libav.git
 cd libav
 git checkout tags/v11.4
 ./configure  --enable-gpl --enable-nonfree --enable-version3 --enable-shared --enable-libx264 --enable-libfaac --enable-libmp3lame --enable-libvpx --enable-libxvid --enable-libvorbis
+make
+make install
+cd ..
+
+cd qpsnr
+make
+chmod +x qpsnr
+sudo cp qpsnr /usr/local/bin
+cd ..
+
+
+
