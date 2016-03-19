@@ -2,6 +2,8 @@
 
 VIDEO=$1
 EXPECTEDREPS=$2
+TIMESTRING=$3
+REGION=$4
 
 #echo 'VIDEO='$VIDEO
 #echo 'EXPECTEDREPS='$EXPECTEDREPS
@@ -15,12 +17,9 @@ START=$(date +%s.%N)
 ID="$(python youtubeAPI/upload_video.py --file $TMPVIDEO)"
 
 END=$(date +%s.%N)
-DIFF=$(echo "$END - $START" | bc)
+UPLOADTIME=$(echo "$END - $START" | bc)
 
 URL='https://www.youtube.com/watch?v='$ID
-
-echo 'Upload '$DIFF' s'
-#echo 'URL: '$URL
 
 youtube-dl -q -F $URL > /dev/null 2>&1
 
@@ -31,9 +30,9 @@ do
 done
 
 END=$(date +%s.%N)
-DIFF=$(echo "$END - $START" | bc)
+PROCTIME=$(echo "$END - $START" | bc)
 
-echo 'Processing '$DIFF' s'
+echo "$REGION	$VIDEO	$TIMESTRING	$UPLOADTIME	$PROCTIME"
 
 REPS=('')
 numOfReps=0
@@ -63,11 +62,11 @@ do
 
 
 	while read -r line ; do
-		echo "$line"' '$DIFF
-		REPS[$numOfReps]=${line%'DASH'*}
+		echo "$REGION	$VIDEO	$TIMESTRING	$line"'	'$DIFF
+		REPS[$numOfReps]=${line%'DASH'*}"DASH"
 		((numOfReps++))	
 	done < <(echo "${DLRESULT}")
 done
 
-python youtubeAPI/delete_video.py --video-id $ID
+python youtubeAPI/delete_video.py --video-id $ID  > /dev/null 2>&1
 rm $TMPVIDEO
