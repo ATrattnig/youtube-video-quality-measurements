@@ -12,3 +12,5 @@
 /scripts/youtubeAPI/upload_video.py-oauth2.json
 /scripts/client_secrets.json
 /scripts/youtubeAPI/client_secrets.json
+/scripts/downloadAudioRepresentations.sh~
+/scripts/scheduleUploadTests.sh~
