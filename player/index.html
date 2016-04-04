@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style type="text/css">
+    .textAreaColumn{
+        width:100%;
+    }
+    .textAreaColumn div{
+        float:left;
+        width:33%;
+        padding:10px;
+        box-sizing: border-box;
+    }
+
+    .textAreaColumn div span{
+        display:block;
+        text-align:center;
+    }
+
+    .textAreaColumn div textarea{
+        box-sizing: border-box;
+        width:100%;
+        border:3px solid red;
+        min-height:20px;
+    }
+</style>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/1.0.2/Chart.min.js"></script>
+<script type="text/javascript">
+    var start = new Date().getTime();
+    var bufferLogStarted = false;
+    var videoEnded = false;
+    var bufferChart = null;
+    var bufferStartTime = null;
+    var bufferingTime = 0;
+    var qualityChanges = -1;
+    var numberOfBufferLogs = 0;
+    var totalBufferDurations = 0;
+
+    Chart.defaults.global.animation = false;
+
+    var data = {
+        labels: ["0"],
+        datasets: [
+            {
+                label: "My First dataset",
+                fillColor: "rgba(220,220,220,0.2)",
+                strokeColor: "rgba(220,220,220,1)",
+                pointColor: "rgba(220,220,220,1)",
+                pointStrokeColor: "#fff",
+                pointHighlightFill: "#fff",
+                pointHighlightStroke: "rgba(220,220,220,1)",
+                data: [0]
+            }
+        ]
+    };
+
+    var tag = document.createElement('script');
+    tag.src = "https://www.youtube.com/iframe_api";
+    var firstScriptTag = document.getElementsByTagName('script')[0];
+    firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+
+    var player;
+    function onYouTubeIframeAPIReady() {
+        player = new YT.Player('player', {
+            height: '1080',
+            width: '1920',
+            events: {
+                'onReady': onPlayerReady,
+                'onStateChange': onPlayerStateChange,
+                'onPlaybackQualityChange': onPlaybackQualityChange
+            }
+        });
+    }
+
+    function onPlayerReady(event)
+    {
+        console.log("On player ready.");
+    }
+
+    function onPlayerStateChange(event)
+    {
+        if (event.data == YT.PlayerState.PLAYING && !bufferLogStarted)
+        {
+            setTimeout(bufferLogFunction, 1000);
+            bufferLogStarted = true;
+        }
+
+        if (event.data == YT.PlayerState.ENDED)
+        {
+            videoEnded = true;
+        }
+
+        if (event.data == YT.PlayerState.BUFFERING)
+        {
+            bufferStartTime = getTimeStamp();
+        }
+
+        if (event.data == YT.PlayerState.PLAYING)
+        {
+            if (bufferStartTime != null)
+            {
+                var duration = getTimeStamp() - bufferStartTime;
+                console.log("Buffer Duration: " + duration);
+                bufferingTime += duration;
+                document.getElementById("buffTimeLog").value = bufferingTime + " ms";
+            }
+        }
+
+        console.log("State changed: " + getState(event.data) + ", time: " + getTimeStamp() + " ms");
+        document.getElementById("stateLog").value += getTimeStamp() + "\t" + getState(event.data) + "\n";
+        document.getElementById("stateLog").scrollTop = document.getElementById("stateLog").scrollHeight;
+    }
+
+    function onPlaybackQualityChange(event)
+    {
+        console.log("Quality changed: " + event.data + ", time: " + getTimeStamp() + " ms");
+        document.getElementById("qualityLog").value += getTimeStamp() + "\t" + event.data + "\n";
+        document.getElementById("qualityLog").scrollTop = document.getElementById("qualityLog").scrollHeight;
+        qualityChanges++;
+        document.getElementById("qualityChangesLog").value = qualityChanges + " times";
+    }
+
+    function handleClick(event)
+    {
+        videoEnded = false;
+
+        if (bufferChart != null)
+            bufferChart.clear();
+
+        var ctx = document.getElementById("bufferChart").getContext("2d");
+        bufferChart = new Chart(ctx).Line(data, {
+            pointDot: false,
+            scaleShowVerticalLines: false
+        });
+
+        document.getElementById("stateLog").value = "";
+        document.getElementById("qualityLog").value = "";
+        document.getElementById("bufferLog").value = "";
+        document.getElementById("buffTimeLog").value = "";
+        document.getElementById("qualityChangesLog").value = "";
+        document.getElementById("avgBufferLog").value = "";
+        start = new Date().getTime();
+        player.loadVideoById(document.getElementById('videoId').value);
+    }
+
+    var cnt = 0;
+    function bufferLogFunction()
+    {
+        if (!videoEnded)
+            setTimeout(bufferLogFunction, 1000);
+
+        var currTime = getTimeStamp();
+        var videoTime = Math.round(player.getCurrentTime() * 100) / 100;
+        var bufferFraction = player.getVideoLoadedFraction();
+        var bufferTime = Math.round((bufferFraction * player.getDuration()) * 100) / 100;
+        bufferFraction = Math.round(bufferFraction * 100) / 100;
+
+        document.getElementById("bufferLog").value += currTime + "\t" + videoTime + "\t" + bufferTime + "\t" + bufferFraction + "\n";
+        document.getElementById("bufferLog").scrollTop = document.getElementById("bufferLog").scrollHeight;
+
+        var timeInBuffer = bufferTime - videoTime;
+        if (timeInBuffer < 0)
+            timeInBuffer = 0;
+        bufferChart.addData([timeInBuffer], "");
+
+        numberOfBufferLogs++;
+        totalBufferDurations += timeInBuffer;
+        var averageBuffer = Math.round(totalBufferDurations / numberOfBufferLogs * 100) / 100;
+        document.getElementById("avgBufferLog").value = averageBuffer + " sec";
+    }
+
+    function getTimeStamp()
+    {
+        var end = new Date().getTime();
+        return end - start;
+    }
+
+    function getState(state)
+    {
+        if (state== YT.PlayerState.ENDED)
+            return "ended";
+        if (state== YT.PlayerState.PLAYING)
+            return "playing";
+        if (state== YT.PlayerState.PAUSED)
+            return "paused";
+        if (state== YT.PlayerState.BUFFERING)
+            return "buffering";
+        if (state== YT.PlayerState.CUED)
+            return "cued";
+
+        return "unstarted";
+
+    }
+
+</script>
+</head>
+<body>
+
+<form name="videoIdForm" action="JavaScript:handleClick()">
+    VideoID: <input type="text" id="videoId" value="ivY-dEPCHkg">
+    <input type="submit" value="Start">
+</form>
+<br>
+<canvas id="bufferChart" width="1800" height="300"></canvas>
+<br>
+<div class="textAreaColumn">
+    <div>
+        <span>Buffering Time</span>
+        <textarea id="buffTimeLog" cols="25" rows="2"></textarea>
+    </div>
+    <div>
+        <span>Quality Changes</span>
+        <textarea id="qualityChangesLog" cols="25" rows="2"></textarea>
+    </div>
+    <div>
+        <span>Average Buffer</span>
+        <textarea id="avgBufferLog" cols="25" rows="2"></textarea>
+    </div>
+</div>
+<br>
+<br>
+<div class="textAreaColumn">
+    <div>
+        <span>State Changes</span>
+        <textarea id="stateLog" cols="25" rows="15"></textarea>
+    </div>
+    <div>
+        <span>Quality Changes</span>
+        <textarea id="qualityLog" cols="25" rows="15"></textarea>
+    </div>
+    <div>
+        <span>Buffer Log</span>
+        <textarea id="bufferLog" cols="25" rows="15"></textarea>
+    </div>
+</div>
+<br>
+<div id="player"></div>
+</body>
+</html>
