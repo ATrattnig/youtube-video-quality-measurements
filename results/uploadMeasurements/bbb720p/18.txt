@@ -1,9 +1,0 @@
-Upload 5.011689359 s
-Processing 450.357854777 s
-140          m4a        audio only DASH audio  128k , m4a_dash container, mp4a.40.2@128k (44100Hz), 9.61MiB 776.131019867
-160          mp4        256x144    DASH video  122k , avc1.4d400c, 30fps, video only, 8.43MiB 776.131019867
-133          mp4        426x240    DASH video  276k , avc1.4d4015, 30fps, video only, 18.58MiB 776.131019867
-134          mp4        640x360    DASH video  638k , avc1.4d401e, 30fps, video only, 33.52MiB 776.131019867
-135          mp4        854x480    DASH video 1164k , avc1.4d401f, 30fps, video only, 63.94MiB 777.504765928
-136          mp4        1280x720   DASH video 2355k , avc1.4d401f, 30fps, video only, 121.40MiB 779.068706555
-Video id 'PEcArbx9J7g' was deleted.
