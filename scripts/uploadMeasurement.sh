@@ -16,6 +16,14 @@ START=$(date +%s.%N)
 
 ID="$(python youtubeAPI/upload_video.py --file $TMPVIDEO)"
 
+while [[ $? -ne 0 ]]
+do
+	rm $TMPVIDEO
+	MP4Box -quiet -add $VIDEO $TMPVIDEO > /dev/null 2>&1
+	START=$(date +%s.%N)
+	ID="$(python youtubeAPI/upload_video.py --file $TMPVIDEO)"
+done
+
 END=$(date +%s.%N)
 UPLOADTIME=$(echo "$END - $START" | bc)
 
@@ -25,7 +33,7 @@ youtube-dl -q -F $URL > /dev/null 2>&1
 
 while [[ $? -ne 0 ]]
 do
-	sleep 0.500
+	sleep 1
 	youtube-dl -q -F $URL > /dev/null 2>&1
 done
 
@@ -48,7 +56,7 @@ do
 
 	while [[ $? -ne 0 ]]
 	do
-		sleep 0.500
+		sleep 1
 		DLRESULT="$(youtube-dl -F $URL | grep 'DASH')"
 		for rep in "${REPS[@]}"
 		do
