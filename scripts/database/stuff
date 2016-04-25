@@ -1,0 +1,51 @@
+CREATE TABLE 'CSVImport' (id INT);
+ALTER TABLE Uploads ADD COLUMN Region VARCHAR(256);
+ALTER TABLE Uploads ADD COLUMN Video VARCHAR(256);
+ALTER TABLE Uploads ADD COLUMN RepresentationID INT;
+ALTER TABLE Uploads ADD COLUMN Description VARCHAR(256);
+ALTER TABLE Uploads ADD COLUMN FinishedTime FLOAT;
+ALTER TABLE Uploads ADD COLUMN FinishedTimeText VARCHAR(256);
+
+
+CREATE TABLE Uploads ( \
+id INT(6) UNSIGNED AUTO_INCREMENT PRIMARY KEY, \
+Region VARCHAR(30), \
+Video VARCHAR(30), \
+Time VARCHAR(30), \
+RepresentationID INT, \
+Description VARCHAR(200), \
+FinishedTime FLOAT, \
+FinishedTimeText VARCHAR(30) \
+);
+
+//Region	Video	Time	Upload	Processing	Upload Mins	Proc Mins
+CREATE TABLE UploadTimes ( \
+id INT(6) UNSIGNED AUTO_INCREMENT PRIMARY KEY, \
+Region VARCHAR(30), \
+Video VARCHAR(30), \
+Time VARCHAR(30), \
+Upload INT, \
+Processing INT, \
+UploadTimeString VARCHAR(30), \
+ProcessingTimeString VARCHAR(30) \
+);
+
+mysqlimport  --ignore-lines=1 --fields-terminated-by='\t' --columns='Region,Video,Time,RepresentationID,Description,FinishedTime,FinishedTimeText' --local -u root -p uploadMeasurements Uploads.tsv 
+
+mysqlimport  --ignore-lines=1 --fields-terminated-by='\t' --columns='Region,Video,Time,Upload,Processing,UploadTimeString,ProcessingTimeString' --local -u root -p uploadMeasurements UploadTimes.tsv 
+
+SELECT Video, AVG(Upload), MIN(Upload), MAX(Upload), AVG(Processing), MIN(Processing), MAX(Processing)
+FROM UploadTimes
+GROUP BY Video;
+
+SELECT "all", Time, Video, AVG(Upload), MIN(Upload), MAX(Upload), AVG(Processing), MIN(Processing), MAX(Processing)
+FROM UploadTimes
+WHERE Time = "22:00"
+GROUP BY Video;
+
+SELECT "all", "all", Video, AVG(FinishedTime), MIN(FinishedTime), MAX(FinishedTime)
+FROM Uploads
+WHERE Video="bbb_720p.mp4"
+GROUP BY RepresentationID;
+
+
