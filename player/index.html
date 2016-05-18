@@ -113,6 +113,7 @@
         {
             videoEnded = true;
 	    downloadLogs();
+	    window.location = "about:blank";
         }
 
         if (event.data == YT.PlayerState.BUFFERING)
@@ -132,14 +133,14 @@
         }
 
         console.log("State changed: " + getState(event.data) + ", time: " + getTimeStamp() + " ms");
-        document.getElementById("stateLog").value += getTimeStamp() + "\t" + getState(event.data) + "\n";
+        document.getElementById("stateLog").value += document.getElementById("videoId").value + "\t" + document.getElementById("setupDescr").value + "\t" + getTimeStamp() + "\t" + getState(event.data) + "\n";
         document.getElementById("stateLog").scrollTop = document.getElementById("stateLog").scrollHeight;
     }
 
     function onPlaybackQualityChange(event)
     {
         console.log("Quality changed: " + event.data + ", time: " + getTimeStamp() + " ms");
-        document.getElementById("qualityLog").value += getTimeStamp() + "\t" + event.data + "\n";
+        document.getElementById("qualityLog").value += document.getElementById("videoId").value + "\t" + document.getElementById("setupDescr").value + "\t" + getTimeStamp() + "\t" + event.data + "\n";
         document.getElementById("qualityLog").scrollTop = document.getElementById("qualityLog").scrollHeight;
         qualityChanges++;
         document.getElementById("qualityChangesLog").value = qualityChanges;
@@ -153,7 +154,7 @@
         writeTextFile(logFileNameBase + "_qualityLog", document.getElementById("qualityLog").value);
         writeTextFile(logFileNameBase + "_bufferLog", document.getElementById("bufferLog").value);
 
-	var statistics = document.getElementById("buffTimeLog").value + "\t" + document.getElementById("qualityChangesLog").value;
+	var statistics = document.getElementById("videoId").value + "\t" + document.getElementById("setupDescr").value + "\t" + document.getElementById("buffTimeLog").value + "\t" + document.getElementById("qualityChangesLog").value;
 	statistics += "\t" + document.getElementById("avgBufferLog").value + "\n";
 	
 	writeTextFile(logFileNameBase + "_statistics", statistics);
@@ -200,7 +201,7 @@
         var bufferTime = Math.round((bufferFraction * player.getDuration()) * 100) / 100;
         bufferFraction = Math.round(bufferFraction * 100) / 100;
 
-        document.getElementById("bufferLog").value += currTime + "\t" + videoTime + "\t" + bufferTime + "\t" + bufferFraction + "\n";
+        document.getElementById("bufferLog").value += document.getElementById("videoId").value + "\t" + document.getElementById("setupDescr").value + "\t" + currTime + "\t" + videoTime + "\t" + bufferTime + "\t" + bufferFraction + "\n";
         document.getElementById("bufferLog").scrollTop = document.getElementById("bufferLog").scrollHeight;
 
         var timeInBuffer = bufferTime - videoTime;

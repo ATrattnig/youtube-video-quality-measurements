@@ -10,7 +10,7 @@ do
 	let "number %= ${#BANDWIDTHS[@]}"
 
 	echo "${BANDWIDTHS[$number]}"
-	sudo wondershaper eth0 ${BANDWIDTHS[$number]} ${BANDWIDTHS[$number]}
+	sudo wondershaper eth2 ${BANDWIDTHS[$number]} ${BANDWIDTHS[$number]}
 
 	sleep $DURATION
 done

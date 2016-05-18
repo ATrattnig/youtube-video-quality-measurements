@@ -10,8 +10,8 @@ for ((i=0;i<${#BANDWIDTHS[@]};++i)); do
 	echo "$durationAccum $bandwidth"
 	
 	let "durationAccum += $duration"
-	sudo wondershaper eth0 $bandwidth $bandwidth
+	sudo wondershaper eth2 $bandwidth $bandwidth
 	sleep $duration
 done
 
-sudo wondershaper clear eth0
+sudo wondershaper clear eth2
