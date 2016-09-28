@@ -30,9 +30,31 @@ UploadTimeString VARCHAR(30), \
 ProcessingTimeString VARCHAR(30) \
 );
 
+//Video	Tag	YoutubeDL ID	Format	Resolution	Bitrate	Codec Tag	FPS	Total Size	Downloaded File	Avg PSNR	Avg SSIM
+
+CREATE TABLE Representations ( \
+id INT(6) UNSIGNED AUTO_INCREMENT PRIMARY KEY, \
+Video VARCHAR(30), \
+UploadResTag VARCHAR(30), \
+YoutubeDlId INT, \
+Format VARCHAR(30), \
+Width INT, \
+Height INT, \
+Bitrate INT, \
+CodecTag VARCHAR(30), \
+Fps INT, \
+TotalSize INT, \
+FilePath VARCHAR(100), \
+AvgPSNR FLOAT, \
+AvgSSIM FLOAT \
+);
+
+
 mysqlimport  --ignore-lines=1 --fields-terminated-by='\t' --columns='Region,Video,Time,RepresentationID,Description,FinishedTime,FinishedTimeText' --local -u root -p uploadMeasurements Uploads.tsv 
 
 mysqlimport  --ignore-lines=1 --fields-terminated-by='\t' --columns='Region,Video,Time,Upload,Processing,UploadTimeString,ProcessingTimeString' --local -u root -p uploadMeasurements UploadTimes.tsv 
+
+mysqlimport  --ignore-lines=1 --fields-terminated-by='\t' --columns='Video,Duration,UploadResTag,YoutubeDlId,Format,Width,Height,Bitrate,CodecTag,Fps,TotalSize,FilePath,AvgPSNR,AvgSSIM' --local -u root -p uploadMeasurements /home/armin/Documents/Representations.tsv
 
 SELECT Video, AVG(Upload), MIN(Upload), MAX(Upload), AVG(Processing), MIN(Processing), MAX(Processing)
 FROM UploadTimes
@@ -42,6 +64,10 @@ SELECT "all", Time, Video, AVG(Upload), MIN(Upload), MAX(Upload), AVG(Processing
 FROM UploadTimes
 WHERE Time = "22:00"
 GROUP BY Video;
+
+SELECT Region, "all", "all", AVG(Upload), MIN(Upload), MAX(Upload), AVG(Processing), MIN(Processing), MAX(Processing)
+FROM UploadTimes
+GROUP BY Region;
 
 SELECT "all", "all", Video, AVG(FinishedTime), MIN(FinishedTime), MAX(FinishedTime)
 FROM Uploads
