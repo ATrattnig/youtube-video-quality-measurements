@@ -326,3 +326,10 @@
 /results/uploadMeasurements/tos720p_us/22.txt
 /results/uploadMeasurements/Uploads.tsv
 /results/uploadMeasurements/UploadTimes.tsv
+/scripts/calculatePSNR.sh~
+/scripts/database/stuff~
+/scripts/getAssetSizes.sh~
+/scripts/getSizes.sh~
+/scripts/measureBitcodinPSNR.sh~
+/scripts/player/performTests.sh~
+/scripts/player/trafficshaping/noShaping.sh~

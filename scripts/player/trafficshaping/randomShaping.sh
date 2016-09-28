@@ -21,7 +21,7 @@ do
         fi
 
 	echo "$bandwidth"
-	sudo wondershaper eth0 $bandwidth $bandwidth
+	sudo wondershaper eth2 $bandwidth $bandwidth
 
 	sleep 1
 done
